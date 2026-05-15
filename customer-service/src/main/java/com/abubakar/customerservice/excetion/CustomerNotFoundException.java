@@ -1,0 +1,8 @@
+package com.abubakar.customerservice.excetion;
+
+public class CustomerNotFoundException extends RuntimeException {
+
+    public CustomerNotFoundException(String message) {
+        super(message);
+    }
+}
