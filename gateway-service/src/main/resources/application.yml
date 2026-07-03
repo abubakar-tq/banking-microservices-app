@@ -1,5 +1,10 @@
 server:
   port: 8888
+application:
+  security:
+    jwt:
+      # Must match the secret the authentication-service signs tokens with.
+      secret: ${JWT_SECRET:AaZzBbCcYyDdXxEeWwFf}
 spring:
   application:
     name: GATEWAY-SERVICE
