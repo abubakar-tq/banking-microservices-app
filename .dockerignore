@@ -1,0 +1,8 @@
+# Keep the Docker build context small and reproducible.
+# The jar is built INSIDE the image, so never ship local build output or IDE/VCS cruft.
+.git
+.gitignore
+.idea
+**/target
+**/*.iml
+HANDOFF PROMPT - Banking App.md
