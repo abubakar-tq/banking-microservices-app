@@ -1,123 +1,165 @@
-version: '3.8'
-
 services:
+  mysql:
+    image: mysql:8.4
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - bank-net
+
   discovery-service:
-    image: discovery-service
-    container_name: discovery-service
+    image: discovery-service:local
     build:
-      context: ./discovery-service
+      context: .
+      dockerfile: discovery-service/Dockerfile
+    container_name: discovery-service
     ports:
       - "8761:8761"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     networks:
-      - bank-network
-
+      - bank-net
   gateway-service:
-    image: gateway-service
-    container_name: gateway-service
+    image: gateway-service:local
     build:
-      context: ./gateway-service
+      context: .
+      dockerfile: gateway-service/Dockerfile
+    container_name: gateway-service
     ports:
       - "8888:8888"
     environment:
-      - DISCOVERY_SERVICE=http://discovery-service:8761/eureka/
-      - ALLOWED_ORIGINS=http://localhost:4200
+      - DISCOVERY_SERVICE
+      - JWT_SECRET
     depends_on:
-      - discovery-service
+      discovery-service:
+        condition: service_healthy
+    restart: unless-stopped
     networks:
-      - bank-network
+      - bank-net
 
-  notification-service:
-    image: notification-service
-    container_name: notification-service
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit
+    ports:
+      - "8025:8025"
+    networks:
+      - bank-net
+
+  authentication-service:
+    image: authentication-service:local
     build:
-      context: ./notification-service
+      context: .
+      dockerfile: authentication-service/Dockerfile
+    container_name: authentication-service
     ports:
       - "8885:8885"
     environment:
-      - DISCOVERY_SERVICE=http://discovery-service:8761/eureka/
-      - MAIL_HOST=172.18.0.4
-      - MAIL_PORT=1025
-      - MAIL_USERNAME=brody
-      - MAIL_PASSWORD=brody
-      - EMAIL_SYSTEM=notification@bank.com
-    depends_on:
-      - discovery-service
-      - gateway-service
-    networks:
-      - bank-network
-
-  user-service:
-    image: user-service
-    container_name: user-service
-    build:
-      context: ./user-service
-    ports:
-      - "8884:8884"
-    environment:
-      - DISCOVERY_SERVICE=http://discovery-service:8761/eureka/
-      - MYSQL_USER=root
-      - MYSQL_PWD=root
-      - MYSQL_HOST=172.18.0.2
+      - DISCOVERY_SERVICE
+      - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
-      - MYSQL_DATABASE=utilisateur
-      - JWT_SECRET=AaZzBbCcYyDdXxEeWwFf
-      - JWT_EXPIRATION=604800000
+      - MYSQL_USER
+      - MYSQL_PWD
+      - MYSQL_DATABASE=auth_db
+      - JWT_SECRET
     depends_on:
-      - discovery-service
-      - gateway-service
-      - notification-service
+      discovery-service:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
     networks:
-      - bank-network
+      - bank-net
 
   customer-service:
-    image: customer-service
+    image: customer-service:local
+    build:
+      context: .
+      dockerfile: customer-service/Dockerfile
     container_name: customer-service
-    build:
-      context: ./customer-service
-    ports:
-      - "8887:8887"
-    environment:
-      - DISCOVERY_SERVICE=http://discovery-service:8761/eureka/
-      - MYSQL_USER=root
-      - MYSQL_PWD=root
-      - MYSQL_HOST=172.18.0.2
-      - MYSQL_PORT=3306
-      - MYSQL_DATABASE=customer_db
-      - JWT_SECRET=AaZzBbCcYyDdXxEeWwFf
-      - JWT_EXPIRATION=604800000
-    depends_on:
-      - discovery-service
-      - gateway-service
-      - notification-service
-    networks:
-      - bank-network
-
-  account-service:
-    image: account-service
-    container_name: account-service
-    build:
-      context: ./account-service
     ports:
       - "8886:8886"
     environment:
-      - DISCOVERY_SERVICE=http://discovery-service:8761/eureka/
-      - MYSQL_USER=root
-      - MYSQL_PWD=root
-      - MYSQL_HOST=172.18.0.2
+      - DISCOVERY_SERVICE
+      - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
-      - MYSQL_DATABASE=account_db
-      - AXON_HOST=172.18.0.3
-      - AXON_PORT=8124
-      - AXON_CONSOLE=df10b708-0:6p47cea5j2ff4ae0a17p227163886825
-      - JWT_SECRET=AaZzBbCcYyDdXxEeWwFf
-      - JWT_EXPIRATION=604800000
+      - MYSQL_USER
+      - MYSQL_PWD
+      - MYSQL_DATABASE=customer_db
+      - JWT_SECRET
     depends_on:
-      - discovery-service
-      - gateway-service
-      - customer-service
+      discovery-service:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
     networks:
-      - bank-network
+      - bank-net
+
+  account-service:
+    image: account-service:local
+    build:
+      context: .
+      dockerfile: account-service/Dockerfile
+    container_name: account-service
+    ports:
+      - "8884:8884"
+    environment:
+      - DISCOVERY_SERVICE
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER
+      - MYSQL_PWD
+      - MYSQL_DATABASE=account_db
+      - JWT_SECRET
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - bank-net
+
+  notification-service:
+    image: notification-service:local
+    build:
+      context: .
+      dockerfile: notification-service/Dockerfile
+    container_name: notification-service
+    ports:
+      - "8887:8887"
+    environment:
+      - DISCOVERY_SERVICE
+      - MAIL_HOST=mailpit
+      - MAIL_PORT=1025
+      - MAIL_USERNAME
+      - MAIL_PASSWORD
+      - EMAIL_SYSTEM
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - bank-net
 
 networks:
-  bank-network:
-    external: true
+  bank-net:
+    driver: bridge
+volumes:
+  mysql-data:
