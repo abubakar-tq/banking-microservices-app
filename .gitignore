@@ -1,0 +1,20 @@
+# Secrets / local config — never commit
+.env
+
+# Build output
+**/target/
+
+# IDE
+.idea/
+*.iml
+
+# Local tooling binaries accidentally downloaded into the repo
+kubectl
+minikube-linux-amd64
+
+# Learning guide & local helper scripts (not part of the app)
+k8s/KUBERNETES-GUIDE.md
+smoke-test.sh
+smoke-test-k8s.sh
+demo-data.sh
+scaffold-dashboard.sh
