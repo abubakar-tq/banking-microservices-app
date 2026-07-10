@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-service
+  labels:
+    app: customer-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-service
+  template:
+    metadata:
+      labels:
+        app: customer-service
+    spec:
+      containers:
+        - name: customer-service
+          image: customer-service:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8886
+          envFrom:
+            - configMapRef:
+                name: bank-config
+            - secretRef:
+                name: bank-secret
+          env:
+            - name: MYSQL_DATABASE
+              value: customer_db
+          readinessProbe:
+            httpGet:
+              path: /bank/actuator/health
+              port: 8886
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-service
+spec:
+  selector:
+    app: customer-service
+  ports:
+    - port: 8886
+      targetPort: 8886
