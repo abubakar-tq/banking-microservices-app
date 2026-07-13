@@ -24,6 +24,16 @@
         <module>account-service</module>
     </modules>
 
+    <dependencies>
+        <!-- Exposes /actuator/prometheus on every service so Prometheus can scrape metrics.
+             Inherited by all child modules. Version managed by the Spring Boot parent. -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
