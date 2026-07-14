@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: banking-alerts
+  labels:
+    release: monitoring          # so the stack's Prometheus selects it (same as ServiceMonitor)
+spec:
+  groups:
+    - name: banking.rules
+      rules:
+        - alert: AccountServiceDown
+          # up==0 = target exists but scrape failed; absent(...) = target vanished (e.g. scaled to 0 / no pods)
+          expr: up{job="account-service"} == 0 or absent(up{job="account-service"})
+          for: 1m                                   # must stay down 1 min before firing (avoids flapping)
+          labels:
+            severity: critical
+          annotations:
+            summary: "account-service is down"
+            description: "Prometheus could not scrape account-service for over 1 minute."
