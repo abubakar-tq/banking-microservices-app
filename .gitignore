@@ -1,5 +1,6 @@
 # Secrets / local config — never commit
 .env
+k8s/secret.yaml
 
 # Build output
 **/target/
