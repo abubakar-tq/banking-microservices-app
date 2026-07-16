@@ -9,3 +9,6 @@ data:
   MAIL_HOST: "mailpit"
   MAIL_PORT: "1025"
   EMAIL_SYSTEM: "notification@bank.com"
+  # Tracing: send spans to Jaeger (OTLP HTTP), and sample 100% of requests (demo).
+  MANAGEMENT_OTLP_TRACING_ENDPOINT: "http://jaeger:4318/v1/traces"
+  MANAGEMENT_TRACING_SAMPLING_PROBABILITY: "1.0"

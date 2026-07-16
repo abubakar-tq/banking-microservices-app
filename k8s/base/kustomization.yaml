@@ -17,3 +17,4 @@ resources:
   - ingress.yaml
   - grafana-dashboard.yaml
   - alerts.yaml
+  - jaeger.yaml
