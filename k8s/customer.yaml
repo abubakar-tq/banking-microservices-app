@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: customer-service
-          image: customer-service:local
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/abubakar-tq/customer-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8886
           envFrom:

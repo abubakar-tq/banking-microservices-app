@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: discovery-service
-          image: discovery-service:local
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/abubakar-tq/discovery-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8761
           readinessProbe:

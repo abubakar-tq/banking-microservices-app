@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: authentication-service
-          image: authentication-service:local
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/abubakar-tq/authentication-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8885
           envFrom:

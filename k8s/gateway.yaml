@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: gateway-service
-          image: gateway-service:local
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/abubakar-tq/gateway-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8888
           envFrom:
