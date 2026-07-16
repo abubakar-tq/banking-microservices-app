@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: banking
+  namespace: argocd              # Application objects live in the argocd namespace
+spec:
+  project: default              # the built-in ArgoCD project
+
+  source:                       # WHERE the desired state lives
+    repoURL: https://github.com/abubakar-tq/banking-microservices-app
+    targetRevision: master      # which branch/tag to track
+    path: k8s                   # which folder in the repo holds the manifests
+
+  destination:                  # WHERE to deploy
+    server: https://kubernetes.default.svc   # "this same cluster" (in-cluster)
+    namespace: default          # namespace for manifests that don't set their own
+
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true     # create the target namespace if missing
+    # NOTE: no "automated:" block yet — we start with MANUAL sync so you can
+    # see the diff in the UI and click Sync yourself. We'll turn on auto-sync + self-heal next.
