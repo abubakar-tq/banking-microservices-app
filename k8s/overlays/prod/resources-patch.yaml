@@ -1,0 +1,18 @@
+# Strategic-merge patch: give account-service resource requests + limits.
+# requests = guaranteed reservation (scheduler uses it); limits = hard cap
+# (memory over-limit → OOMKilled; CPU over-limit → throttled).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: account-service
+spec:
+  template:
+    spec:
+      containers:
+        - name: account-service
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              memory: "512Mi"

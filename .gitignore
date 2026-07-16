@@ -1,6 +1,7 @@
 # Secrets / local config — never commit
 .env
 k8s/secret.yaml
+sealed-secrets-key-backup.yaml
 
 # Build output
 **/target/

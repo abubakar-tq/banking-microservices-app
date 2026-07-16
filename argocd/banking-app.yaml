@@ -9,7 +9,7 @@ spec:
   source:                       # WHERE the desired state lives
     repoURL: https://github.com/abubakar-tq/banking-microservices-app
     targetRevision: master      # which branch/tag to track
-    path: k8s                   # which folder in the repo holds the manifests
+    path: k8s/overlays/dev      # a Kustomize overlay (ArgoCD auto-detects kustomization.yaml)
 
   destination:                  # WHERE to deploy
     server: https://kubernetes.default.svc   # "this same cluster" (in-cluster)

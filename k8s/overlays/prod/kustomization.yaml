@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# PROD overlay: base + production hardening. (Demonstration — ArgoCD deploys the
+# dev overlay on our single-node cluster; this shows how a prod env would differ.)
+resources:
+  - ../../base
+
+# Run more copies of the busiest services for availability.
+replicas:
+  - name: account-service
+    count: 2
+  - name: gateway-service
+    count: 2
+
+# Add CPU/memory requests+limits to a service via a strategic-merge patch.
+# (In a real prod overlay you'd add a similar patch per service.)
+patches:
+  - path: resources-patch.yaml
+    target:
+      kind: Deployment
+      name: account-service
