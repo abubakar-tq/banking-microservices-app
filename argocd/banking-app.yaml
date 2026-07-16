@@ -16,7 +16,8 @@ spec:
     namespace: default          # namespace for manifests that don't set their own
 
   syncPolicy:
+    automated:
+      prune: true        # if a manifest is removed from Git, delete it from the cluster
+      selfHeal: true     # if the cluster is changed by hand, revert it back to Git
     syncOptions:
       - CreateNamespace=true     # create the target namespace if missing
-    # NOTE: no "automated:" block yet — we start with MANUAL sync so you can
-    # see the diff in the UI and click Sync yourself. We'll turn on auto-sync + self-heal next.
