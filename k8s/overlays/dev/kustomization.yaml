@@ -5,3 +5,19 @@ kind: Kustomization
 # Light enough for a local single-node cluster (this is what ArgoCD deploys).
 resources:
   - ../../base
+
+# Pin every service to an IMMUTABLE git-SHA image tag (not :latest).
+# Deploying a new build = bump these tags; rollback = revert them. Reproducible.
+images:
+  - name: ghcr.io/abubakar-tq/discovery-service
+    newTag: 6864e90e271d17093e7e2591f9ad36af7565ddc3
+  - name: ghcr.io/abubakar-tq/gateway-service
+    newTag: 6864e90e271d17093e7e2591f9ad36af7565ddc3
+  - name: ghcr.io/abubakar-tq/authentication-service
+    newTag: 6864e90e271d17093e7e2591f9ad36af7565ddc3
+  - name: ghcr.io/abubakar-tq/customer-service
+    newTag: 6864e90e271d17093e7e2591f9ad36af7565ddc3
+  - name: ghcr.io/abubakar-tq/account-service
+    newTag: 6864e90e271d17093e7e2591f9ad36af7565ddc3
+  - name: ghcr.io/abubakar-tq/notification-service
+    newTag: 6864e90e271d17093e7e2591f9ad36af7565ddc3
