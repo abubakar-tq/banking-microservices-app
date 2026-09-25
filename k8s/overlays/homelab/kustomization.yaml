@@ -13,3 +13,4 @@ patches:
     target:
       kind: Deployment
       name: mysql
+  - path: exclude-observability.yaml

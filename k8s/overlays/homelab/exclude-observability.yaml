@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger
+$patch: delete
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger
+$patch: delete
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: account-service
+$patch: delete
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: banking-alerts
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bank-config
+data:
+  MANAGEMENT_OTLP_TRACING_ENDPOINT: null
