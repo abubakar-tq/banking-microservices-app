@@ -1,6 +1,3 @@
-# syntax=docker/dockerfile:1
-
-# ---------- Stage 1: build (JDK 21 + Maven live here, not in the final image) ----------
 FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /workspace
 
@@ -13,7 +10,6 @@ COPY . .
 RUN --mount=type=cache,target=/root/.m2 \
     mvn -B -pl discovery-service -am -DskipTests clean package
 
-# ---------- Stage 2: runtime (slim JRE only) ----------
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
