@@ -34,11 +34,42 @@ spec:
                 secretKeyRef:
                   name: bank-secret
                   key: MYSQL_ROOT_PASSWORD
+            - name: APP_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: bank-secret
+                  key: MYSQL_USER
+            - name: APP_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bank-secret
+                  key: MYSQL_PWD
           ports:
             - containerPort: 3306
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/bash
+                  - -c
+                  - |
+                    for i in $(seq 1 60); do
+                      mysqladmin ping -h localhost -uroot -p"$MYSQL_ROOT_PASSWORD" --silent && break
+                      sleep 2
+                    done
+                    mysql -uroot -p"$MYSQL_ROOT_PASSWORD" <<-EOSQL
+                        CREATE DATABASE IF NOT EXISTS auth_db;
+                        CREATE DATABASE IF NOT EXISTS customer_db;
+                        CREATE DATABASE IF NOT EXISTS account_db;
+                        CREATE USER IF NOT EXISTS '${APP_DB_USER}'@'%' IDENTIFIED BY '${APP_DB_PASSWORD}';
+                        GRANT ALL PRIVILEGES ON auth_db.* TO '${APP_DB_USER}'@'%';
+                        GRANT ALL PRIVILEGES ON customer_db.* TO '${APP_DB_USER}'@'%';
+                        GRANT ALL PRIVILEGES ON account_db.* TO '${APP_DB_USER}'@'%';
+                        FLUSH PRIVILEGES;
+                    EOSQL
           readinessProbe:
             exec:
               command: ["sh", "-c", "mysqladmin ping -h localhost -uroot -p$MYSQL_ROOT_PASSWORD"]
