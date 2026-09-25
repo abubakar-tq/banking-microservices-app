@@ -25,6 +25,7 @@ spec:
                 name: bank-config
             - secretRef:
                 name: bank-secret
+          env: []
           readinessProbe:
             httpGet:
               path: /bank/actuator/health

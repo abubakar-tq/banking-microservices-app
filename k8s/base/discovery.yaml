@@ -20,6 +20,7 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8761
+          env: []
           readinessProbe:
             httpGet:
               path: /actuator/health
