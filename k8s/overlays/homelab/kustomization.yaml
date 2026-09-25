@@ -15,3 +15,17 @@ patches:
       name: mysql
   - path: exclude-observability.yaml
   - path: ingress-patch.yaml
+
+images:
+  - name: ghcr.io/abubakar-tq/discovery-service
+    newTag: c15a58a03a46a219e7b6d8c6e4a71c95305085f8
+  - name: ghcr.io/abubakar-tq/gateway-service
+    newTag: c15a58a03a46a219e7b6d8c6e4a71c95305085f8
+  - name: ghcr.io/abubakar-tq/authentication-service
+    newTag: c15a58a03a46a219e7b6d8c6e4a71c95305085f8
+  - name: ghcr.io/abubakar-tq/customer-service
+    newTag: c15a58a03a46a219e7b6d8c6e4a71c95305085f8
+  - name: ghcr.io/abubakar-tq/account-service
+    newTag: c15a58a03a46a219e7b6d8c6e4a71c95305085f8
+  - name: ghcr.io/abubakar-tq/notification-service
+    newTag: c15a58a03a46a219e7b6d8c6e4a71c95305085f8
