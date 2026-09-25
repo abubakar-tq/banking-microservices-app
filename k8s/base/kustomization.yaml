@@ -5,7 +5,7 @@ kind: Kustomization
 # and layer on their per-environment differences.
 resources:
   - configmap.yaml
-  - sealed-secret.yaml
+  - secret.yaml
   - discovery.yaml
   - mysql.yaml
   - authentication.yaml
