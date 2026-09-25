@@ -1,0 +1,14 @@
+- op: add
+  path: /spec/template/spec/containers/0/resources
+  value:
+    requests:
+      cpu: "100m"
+      memory: "300Mi"
+    limits:
+      cpu: "500m"
+      memory: "420Mi"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: JAVA_TOOL_OPTIONS
+    value: "-Xmx256m -XX:MaxMetaspaceSize=160m -XX:MaxDirectMemorySize=32m -XX:+UseSerialGC"
