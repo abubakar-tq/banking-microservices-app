@@ -14,3 +14,4 @@ patches:
       kind: Deployment
       name: mysql
   - path: exclude-observability.yaml
+  - path: ingress-patch.yaml
